@@ -1,14 +1,62 @@
-<tool id="hedm_lattice_parameter_correction" name="HEDM lattice parameter correction" version="0.1.0" python_template_version="3.5">
-    <requirements>
-    </requirements>
+<tool id="hedm_lattice_parameter_correction" name="HEDM lattice parameter correction" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.5">
+    <description>Extract average lattice parameters from grains.out</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
     <command detect_errors="exit_code"><![CDATA[
-        TODO: Fill in command template.
+        @CMD_IMPORTS@
+        #set $material_file= $ln_name($material,'h5')
+        cp '$material' '$material_file' &&
+        #set $instrument_file = $ln_name($instrument,'yml')
+        cp '$instrument' '$instrument_file' &&
+        ls -ltr &&
+        $__tool_directory__/lattice_parameter_correction.py
+        --min-completeness $min_completeness
+        $force_symmetry
+        $hexrd_cfg
+        $grains
+        --average_lattice '$lattice_out'
+        --materials_out '$materials_out'
+        && ls -ltr
     ]]></command>
+    <configfiles>
+        <configfile name="hexrd_cfg"><![CDATA[#slurp
+@CMD_IMPORTS@
+#slurp
+#set $material_file = $ln_name($material,'h5')
+#set $instrument_file = $ln_name($instrument,'yml')
+$update_config($config, $material_file, $instrument_file)
+        ]]></configfile>
+    </configfiles>
+
     <inputs>
+        <param name="config" type="data" format="hexrd.yml"  label="config file from hexrd fitgrains"/>
+        <param name="instrument" type="data" format="hexrd.yml"  label="instrument file from hexrd fitgrains"/>
+        <param name="material" type="data" format="hexrd.materials.h5"  label="material file used in hexrd fitgrains"/>
+        <param name="grains" type="data" format="tabular"  label="grains.out from hexrd fitgrains"/>
+        <param name="min_completeness" argument="--min-completeness" type="float" value="0.75" min="0.0" max="1.0" label="completeness threshold"/>
+        <param name="force_symmetry" argument="--force-symmetry" type="boolean" truevalue="--force-symmetry" falsevalue="" checked="false" label="force symmetry"/>
     </inputs>
     <outputs>
+        <data name="lattice_out" format="tabular" label="${tool.name} ${on_string} average lattice"/>
+        <data name="materials_out" format="hexrd.materials.h5" label="material_avg.h5"/>
     </outputs>
+    <tests>
+        <test>
+            <param name="config" ftype="hexrd.yml" value="config.yml"/>
+            <param name="instrument" ftype="hexrd.yml" value="dexelas_id3a_20200130.yml"/>
+            <param name="material" ftype="hexrd.materials.h5" value="materials_h5.h5"/>
+            <param name="grains" ftype="tabular" value="grains.out"/>
+            <output name="lattice_out" ftype="tabular">
+                <assert_contents>
+                    <has_text_matching expression="4.75\d*\t4.7\d*\t12.9\d*\t90.\d*\t90.\d*\t120.\d*"/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
     <help><![CDATA[
-        TODO: Fill in help.
+Update a hexrd materials file with averaged latice parameters.
     ]]></help>
+    <expand macro="citations" />
 </tool>

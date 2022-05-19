@@ -1,0 +1,50 @@
+<macros>
+    <token name="@TOOL_VERSION@">0.8.19</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">21.09</token>
+    <xml name="requirements">
+        <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">hexrd</requirement>
+            <yield/>
+        </requirements>
+    </xml>
+    <xml name="citations">
+        <citations>
+            <citation type="doi">10.1016/j.matchar.2020.110366</citation>
+            <yield />
+        </citations>
+    </xml>
+
+    <token name="@CMD_IMPORTS@">
+#import re
+#import yaml
+#def identifier_or_name($input1)
+    #if hasattr($input1, 'element_identifier')
+        #return $input1.element_identifier
+    #elif hasattr($input1, 'name')
+        #return $input1.name
+    #else
+        #return str($input1)
+    #end if
+#end def
+#def clean($name1)
+    #set $name_clean = $re.sub('[^\w\-_]', '_', $re.sub('(?i)[.](npz|hexrd|yml|dat|out)$','', $name1.split()[-1]))
+    #return $name_clean
+#end def
+#def ln_name($ds,$ext)
+    #set $lname = "%s.%s" % ($clean($identifier_or_name($ds)),$ext)
+    #return $lname
+#end def
+#def update_config($cfg_in, $mat_path, $inst_path)
+    #set $cfg = $yaml.safe_load(open(str($cfg_in),'r'))    
+    #if $mat_path and 'material' in $cfg and 'definitions' in $cfg['material']
+        #silent $cfg['material']['definitions'] = str($mat_path)
+    #end if
+    #if $inst_path and 'instrument' in $cfg 
+        #silent $cfg['instrument'] = str($inst_path)
+    #end if
+#slurp
+$yaml.dump($cfg)
+#end def
+    </token>
+</macros>

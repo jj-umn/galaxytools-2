@@ -1,0 +1,8 @@
+name: hedm_lattice_parameter_correction
+owner: ximgchess
+categories:
+- Structural Materials Analysis
+description: Extract average lattice parameters from hexrd grains.out
+homepage_url: https://github.com/HEXRD/hexrd
+long_description: High energy diffraction data analysis. Extract average lattice parameters from hexrd grains.out, and update the materials.hs
+remote_repository_url: https://github.com/ximg-chess/galaxytools/tools/hedm_lattice_parameter_correction

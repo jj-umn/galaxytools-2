@@ -10,7 +10,6 @@
         cp '$material' '$material_file' &&
         #set $instrument_file = $ln_name($instrument,'yml')
         cp '$instrument' '$instrument_file' &&
-        ls -ltr &&
         $__tool_directory__/lattice_parameter_correction.py
         --min-completeness $min_completeness
         $force_symmetry
@@ -18,7 +17,6 @@
         $grains
         --average_lattice '$lattice_out'
         --materials_out '$materials_out'
-        && ls -ltr
     ]]></command>
     <configfiles>
         <configfile name="hexrd_cfg"><![CDATA[#slurp

@@ -1,0 +1,19 @@
+<tool id="nexpy_tree" name="NeXpy tree" version="0.1.0+galaxy0" python_template_version="3.5" profile="21.05">
+    <description>display the tree structure of a NeXus file</description>
+    <requirements>
+        <requirement type="package" version="0.14.8">nexpy</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        $__tool_directory__/nexpy_tree.py '$input' '$output'
+    ]]></command>
+    <inputs>
+        <param name="input" type="data" formata="nxs" label="NeXus file to describe"/>
+    </inputs>
+    <outputs>
+        <data name="output" format="txt"/> 
+    </outputs>
+    <help><![CDATA[
+**NeXpy tree**
+Show the tree structure of a NeXus file
+]]></help>
+</tool>
